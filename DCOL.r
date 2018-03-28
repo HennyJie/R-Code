@@ -74,11 +74,17 @@
     dcol<-function(array)
     {
         null.distr<-gene.specific.null(array)
-
         sim.mat<-scol.matrix(array,direction=1)  ## similarity matrix by SCOL, asymmetric, column given row
         d.tmp.mat<-sim.mat
-
-        for(i in 1:nrow(sim.mat)) d.tmp.mat[,i]<-pnorm(sim.mat[,i], mean=null.distr[i,1], sd=null.distr[i,2],lower.tail=TRUE)
+        for(i in 1:nrow(sim.mat)) d.tmp.mat[,i]<-sqrt(1-(1/2)*pnorm(sim.mat[,i], mean=null.distr[i,1], sd=null.distr[i,2],lower.tail=TRUE))
+        for(i in 1:nrow(array)-1)
+        {
+          for(j in (i+1):nrow(array))
+          {
+            d.tmp.mat[i,j]=max(d.tmp.mat[i,j],d.tmp.mat[j,i])
+            d.tmp.mat[j,i]=max(d.tmp.mat[i,j],d.tmp.mat[j,i])
+          }
+        }
         d.tmp.mat
     }
     
